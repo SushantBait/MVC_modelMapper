@@ -1,6 +1,5 @@
 package com.sprinboot.web_tutorial.service;
 
-import com.sprinboot.web_tutorial.config.MapperConfig;
 import com.sprinboot.web_tutorial.dto.EmployeeDTO;
 import com.sprinboot.web_tutorial.entity.EmployeeEntity;
 import com.sprinboot.web_tutorial.repo.EmployeeRepository;
@@ -41,5 +40,16 @@ public class EmployeeService {
         EmployeeEntity savedEmployeeEntity = employeeRepository.save(inputEmployee);
 
         return modelMapper.map(savedEmployeeEntity, EmployeeDTO.class);
+    }
+
+    public EmployeeDTO updateEmployeeById(EmployeeDTO employeeDTO, Long employeeId) {
+        EmployeeEntity employeeEntity = modelMapper.map(employeeDTO, EmployeeEntity.class);
+        employeeEntity.setId(employeeId);
+        EmployeeEntity savedEmployeeEntity = employeeRepository.save(employeeEntity);
+        return modelMapper.map(savedEmployeeEntity,EmployeeDTO.class);
+    }
+
+    public void deleteEmployeeById(Long employeeId) {
+        employeeRepository.deleteById(employeeId);
     }
 }
