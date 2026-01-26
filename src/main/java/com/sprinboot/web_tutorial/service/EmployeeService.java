@@ -5,8 +5,11 @@ import com.sprinboot.web_tutorial.entity.EmployeeEntity;
 import com.sprinboot.web_tutorial.repo.EmployeeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -23,7 +26,7 @@ public class EmployeeService {
 
     public EmployeeDTO getEmployeeById(Long employeeId) {
         EmployeeEntity employeeEntity=employeeRepository.findById(employeeId).orElse(null);
-//        ModelMapper mapper = new ModelMapper();
+//        ModelMapper mapper = new ModelMapper();  //this is skip becoz we can create ModelMapper Object every time
         return modelMapper.map(employeeEntity, EmployeeDTO.class);
     }
 
@@ -49,7 +52,26 @@ public class EmployeeService {
         return modelMapper.map(savedEmployeeEntity,EmployeeDTO.class);
     }
 
-    public void deleteEmployeeById(Long employeeId) {
+    public boolean deleteEmployeeById(Long employeeId) {
+        boolean exsits = isExistsEmployeeId(employeeId);
+        if(!exsits) return false;
         employeeRepository.deleteById(employeeId);
+        return true;
+    }
+
+    public EmployeeDTO updatePartialEmployeeById(Long employeeId, Map<String, Object> update) {
+
+        boolean exsits = isExistsEmployeeId(employeeId);
+        if(!exsits) return null;
+        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).get();
+        update.forEach((key, value)->{
+            Field fieldToBeUpdated = ReflectionUtils.findField(EmployeeEntity.class, key);
+            ReflectionUtils.setField(fieldToBeUpdated,employeeEntity,value);
+        });
+        return modelMapper.map(employeeRepository.save(employeeEntity), EmployeeDTO.class);
+    }
+
+    public boolean isExistsEmployeeId(Long employeeId){
+        return employeeRepository.existsById(employeeId);
     }
 }
