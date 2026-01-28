@@ -2,8 +2,10 @@ package com.sprinboot.web_tutorial.service;
 
 import com.sprinboot.web_tutorial.dto.EmployeeDTO;
 import com.sprinboot.web_tutorial.entity.EmployeeEntity;
+import com.sprinboot.web_tutorial.exceptions.ResourceNotFoundException;
 import com.sprinboot.web_tutorial.repo.EmployeeRepository;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.bytebuddy.asm.Advice;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -46,6 +48,7 @@ public class EmployeeService {
     }
 
     public EmployeeDTO updateEmployeeById(EmployeeDTO employeeDTO, Long employeeId) {
+        isExistsEmployeeId(employeeId);
         EmployeeEntity employeeEntity = modelMapper.map(employeeDTO, EmployeeEntity.class);
         employeeEntity.setId(employeeId);
         EmployeeEntity savedEmployeeEntity = employeeRepository.save(employeeEntity);
@@ -53,16 +56,14 @@ public class EmployeeService {
     }
 
     public boolean deleteEmployeeById(Long employeeId) {
-        boolean exsits = isExistsEmployeeId(employeeId);
-        if(!exsits) return false;
+        isExistsEmployeeId(employeeId);
         employeeRepository.deleteById(employeeId);
         return true;
     }
 
     public EmployeeDTO updatePartialEmployeeById(Long employeeId, Map<String, Object> update) {
 
-        boolean exsits = isExistsEmployeeId(employeeId);
-        if(!exsits) return null;
+        isExistsEmployeeId(employeeId);
         EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).get();
         update.forEach((key, value)->{
             Field fieldToBeUpdated = ReflectionUtils.findField(EmployeeEntity.class, key);
@@ -71,7 +72,8 @@ public class EmployeeService {
         return modelMapper.map(employeeRepository.save(employeeEntity), EmployeeDTO.class);
     }
 
-    public boolean isExistsEmployeeId(Long employeeId){
-        return employeeRepository.existsById(employeeId);
+    public void isExistsEmployeeId(Long employeeId){
+        boolean exists = employeeRepository.existsById(employeeId);
+        if(!exists) throw new ResourceNotFoundException("Resource not found with id: "+employeeId);
     }
 }

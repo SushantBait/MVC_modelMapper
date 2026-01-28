@@ -2,6 +2,7 @@ package com.sprinboot.web_tutorial.controller;
 
 import com.sprinboot.web_tutorial.dto.EmployeeDTO;
 import com.sprinboot.web_tutorial.entity.EmployeeEntity;
+import com.sprinboot.web_tutorial.exceptions.ResourceNotFoundException;
 import com.sprinboot.web_tutorial.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -33,7 +35,7 @@ public class EmployeeController{
 
         return employeeDTO
                 .map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1))
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(()-> new ResourceNotFoundException("Employee not found id: "+id));
     }
 
 
