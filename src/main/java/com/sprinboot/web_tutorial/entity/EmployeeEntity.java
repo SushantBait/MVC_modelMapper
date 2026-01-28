@@ -1,33 +1,33 @@
 package com.sprinboot.web_tutorial.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
-@Table(name ="employee")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name ="employee")
 public class EmployeeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column
     private String name;
 
-    @Column
     private String email;
 
-    @Column
     private Integer age;
 
-    @Column
     private LocalDate dateOfJoining;
 
-    @Column
+    @JsonProperty("isActive")
     private Boolean isActive;
+
+    private Double salary;
 }
