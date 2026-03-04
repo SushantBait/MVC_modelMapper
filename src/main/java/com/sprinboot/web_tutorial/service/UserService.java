@@ -1,6 +1,7 @@
 package com.sprinboot.web_tutorial.service;
 
 import com.sprinboot.web_tutorial.config.MapperConfig;
+import com.sprinboot.web_tutorial.dto.LoginDto;
 import com.sprinboot.web_tutorial.dto.SignUpDto;
 import com.sprinboot.web_tutorial.dto.UserDto;
 import com.sprinboot.web_tutorial.entity.User;
@@ -8,7 +9,10 @@ import com.sprinboot.web_tutorial.exceptions.ResourceNotFoundException;
 import com.sprinboot.web_tutorial.repo.UserRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
