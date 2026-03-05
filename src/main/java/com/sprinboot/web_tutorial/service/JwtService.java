@@ -37,7 +37,7 @@ public class JwtService {
         Claims claims = Jwts.parser()
                 .verifyWith(getSecretKey())
                 .build()
-                .parseEncryptedClaims(token)
+                .parseSignedClaims(token)
                 .getPayload();
 
         return Long.valueOf(claims.getSubject());

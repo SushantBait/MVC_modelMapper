@@ -2,10 +2,13 @@ package com.sprinboot.web_tutorial.service;
 
 import com.sprinboot.web_tutorial.dto.EmployeeDTO;
 import com.sprinboot.web_tutorial.entity.EmployeeEntity;
+import com.sprinboot.web_tutorial.entity.User;
 import com.sprinboot.web_tutorial.exceptions.ResourceNotFoundException;
 import com.sprinboot.web_tutorial.repo.EmployeeRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.internal.bytebuddy.asm.Advice;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
@@ -27,7 +31,12 @@ public class EmployeeService {
     }
 
     public EmployeeDTO getEmployeeById(Long employeeId) {
-        EmployeeEntity employeeEntity=employeeRepository.findById(employeeId).orElse(null);
+//        EmployeeEntity employeeEntity=employeeRepository.findById(employeeId).orElse(null);
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        log.info(" user {}", user);
+        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).orElseThrow(() -> new ResourceNotFoundException("Employee not found with id "+ employeeId +" "));
 //        ModelMapper mapper = new ModelMapper();  //this is skip becoz we can create ModelMapper Object every time
         return modelMapper.map(employeeEntity, EmployeeDTO.class);
     }
